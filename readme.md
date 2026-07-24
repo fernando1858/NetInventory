@@ -1,405 +1,176 @@
-# NetInventory
+# NetInventory 2.0
 
-**NetInventory** es una herramienta interna de gestión y documentación de infraestructura de red desarrollada para el Departamento TI del Colegio Inglés.
+**NetInventory** es una plataforma de gestión, documentación y análisis
+de infraestructura de red desarrollada para el **Departamento TI del
+Colegio Inglés**.
 
-El sistema centraliza información proveniente de un archivo Excel, permite relacionar bloques documentados con switches físicos, consultar puertos, validar inconsistencias y generar reportes.
+El sistema integra un **inventario físico basado en Microsoft Excel**
+con una **base de datos SQLite** para administrar información operativa,
+relaciones entre switches, topología de red, historial de cambios,
+respaldos, monitoreo SNMP y herramientas de diagnóstico.
 
----
+Su filosofía es simple: **el Excel continúa siendo la fuente oficial del
+inventario**, mientras que **SQLite administra la información
+operativa**, sin modificar nunca la documentación oficial.
 
-## Información del proyecto
+------------------------------------------------------------------------
 
-- **Aplicación:** NetInventory
-- **Versión:** 1.0.0
-- **Organización:** Colegio Inglés
-- **Área responsable:** Departamento TI
-- **Lenguaje:** Python
-- **Interfaz:** Consola
-- **Base de datos:** SQLite
-- **Archivo de inventario:** Excel
+# Información del proyecto
 
----
+-   **Aplicación:** NetInventory
+-   **Versión:** 2.0.0
+-   **Organización:** Colegio Inglés
+-   **Área responsable:** Departamento TI
+-   **Lenguaje:** Python
+-   **Interfaz:** Consola (Rich)
+-   **Arquitectura:** Excel + SQLite + SNMP
+-   **Base de datos:** SQLite
+-   **Inventario oficial:** Microsoft Excel
 
-## Funcionalidades principales
+------------------------------------------------------------------------
 
-### Inventario de red
+# Funcionalidades
 
-- Lectura del archivo Excel sin modificarlo.
-- Detección automática de hojas y bloques de switches.
-- Carga de puertos, equipos, bocas patch y VLAN.
-- Normalización de tipos de dispositivos.
-- Detección de puertos duplicados.
-- Identificación de datos incompletos.
+## Inventario
 
-### Ficha completa de red
+-   Lectura del Excel en modo solo lectura.
+-   Detección automática de hojas y bloques.
+-   Inventario de puertos, VLAN, patch panel y equipos.
+-   Validación del inventario.
+-   Detección de inconsistencias.
 
-Permite consultar un puerto seleccionando:
+## Gestión de Switches
 
-1. hoja o sector;
-2. switch relacionado;
-3. número de puerto.
+La hoja **PASSSWITCH** continúa siendo la fuente oficial de los
+switches.
 
-La ficha muestra:
+SQLite almacena además: - relaciones con bloques; - topología; -
+historial; - criticidad; - clasificación; - fechas de actualización.
 
-- ubicación;
-- fila del Excel;
-- puerto del switch;
-- equipo conectado;
-- tipo de equipo;
-- boca del patch panel;
-- VLAN;
-- IP del switch;
-- MAC;
-- marca;
-- modelo.
+## Dashboard
 
-### Gestión de switches
+Resumen general del estado del inventario, cobertura y salud de la
+infraestructura.
 
-La hoja `PASSSWITCH` funciona como fuente oficial para los datos de los switches.
+## Buscador Universal
 
-El sistema permite:
+Búsqueda por IP, MAC, VLAN, patch panel, puerto, equipo, hoja, ubicación
+o switch.
 
-- importar switches nuevos;
-- actualizar switches existentes;
-- detectar switches eliminados del Excel;
-- relacionar switches con bloques;
-- validar relaciones;
-- consultar accesos;
-- consultar historial de cambios.
+## Topología
 
-### Seguridad
+-   Árbol jerárquico.
+-   Relaciones padre-hijo.
+-   Puertos de enlace.
+-   Ruta hacia el Core.
+-   Validación de ciclos.
 
-- Acceso protegido mediante variable de entorno.
-- Contraseñas no registradas en el historial.
-- Respaldo automático antes de operaciones críticas.
-- Confirmación antes de eliminar o restaurar información.
-- El archivo Excel original se utiliza únicamente en modo lectura.
+## Centro de Impacto
 
-### Respaldos
+-   Sectores afectados.
+-   Descendientes.
+-   Cobertura.
+-   Prioridad.
+-   Ruta hacia el Core.
 
-La base SQLite se respalda antes de:
+## Centro de Salud
 
-- importar o actualizar switches;
-- modificar relaciones;
-- eliminar relaciones;
-- limpiar relaciones inválidas;
-- restaurar una versión anterior.
+Análisis SNMP de tráfico, utilización, errores e incidencias.
 
-Los respaldos se almacenan en la carpeta:
+## Descubrimiento SNMP
 
-```text
-backups/
+Descubre dispositivos nuevos y los compara con la base SQLite.
+
+## Reportes
+
+Generación automática de reportes Excel.
+
+## Historial y Respaldos
+
+Registro de cambios y respaldos automáticos antes de operaciones
+críticas.
+
+------------------------------------------------------------------------
+
+# Menú principal
+
+``` text
+1. Buscar en NetInventory
+2. Mostrar resumen general
+3. Consultar ficha completa de red
+4. Validar inventario
+5. Gestionar switches y accesos
+6. Generar reporte Excel
+7. Centro de monitoreo SNMP
+8. Centro de impacto de red
+9. Centro de salud de la red
+10. Asistente de incidencias
+0. Salir
 ```
 
-Se conservan automáticamente los respaldos más recientes definidos en `config.py`.
+------------------------------------------------------------------------
 
-### Historial
+# Instalación
 
-El sistema registra:
-
-- switches agregados;
-- switches actualizados;
-- switches eliminados;
-- relaciones creadas;
-- relaciones modificadas;
-- relaciones eliminadas.
-
-Los cambios de contraseña se registran únicamente como:
-
-```text
-Contraseña: modificada
-```
-
-Los valores de las contraseñas no se guardan en el historial.
-
-### Validación del inventario
-
-NetInventory detecta, entre otros:
-
-- campos obligatorios vacíos;
-- puertos duplicados;
-- puertos fuera de rango;
-- VLAN no numéricas;
-- bocas patch no numéricas;
-- tipos no normalizados;
-- troncales sin destino;
-- switches sin relación;
-- relaciones hacia bloques inexistentes.
-
-### Reportes
-
-El sistema genera reportes Excel en:
-
-```text
-reportes/
-```
-
-Actualmente el reporte contiene:
-
-- resumen;
-- inventario general;
-- bloques incompletos;
-- puertos repetidos;
-- información de versión y organización.
-
----
-
-## Estructura del proyecto
-
-```text
-NETINVENTORY/
-├── backups/
-├── datos/
-│   ├── Configuración de Equipos Aruba.xlsx
-│   └── netinventory.db
-├── modulos/
-│   ├── __init__.py
-│   ├── accesos_db.py
-│   ├── base_datos.py
-│   ├── buscador.py
-│   ├── dashboard.py
-│   ├── exportador_excel.py
-│   ├── ficha_red.py
-│   ├── historial.py
-│   ├── interfaz_consola.py
-│   ├── inventario.py
-│   ├── relaciones.py
-│   ├── respaldos.py
-│   ├── revision_incompletos.py
-│   └── validador_inventario.py
-├── reportes/
-├── .env
-├── .env.example
-├── .gitignore
-├── config.py
-├── main.py
-├── README.md
-└── requirements.txt
-```
-
----
-
-## Requisitos
-
-- Python 3.10 o superior.
-- Microsoft Excel o aplicación compatible para revisar reportes.
-- Acceso local al archivo de inventario.
-- PowerShell en Windows.
-
-Dependencias externas:
-
-```text
-openpyxl
-python-dotenv
-```
-
----
-
-## Instalación en Windows
-
-### 1. Abrir PowerShell en la carpeta del proyecto
-
-```powershell
-cd C:\Users\USUARIO\Ruta\NetInventory
-```
-
-### 2. Crear el entorno virtual
-
-```powershell
+``` powershell
 python -m venv venv
-```
-
-### 3. Permitir temporalmente la activación
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
-```
-
-### 4. Activar el entorno virtual
-
-```powershell
 .\venv\Scripts\Activate.ps1
-```
-
-Cuando esté activo, PowerShell mostrará:
-
-```text
-(venv) PS C:\...\NetInventory>
-```
-
-### 5. Instalar dependencias
-
-```powershell
 python -m pip install -r requirements.txt
 ```
 
-### 6. Configurar la clave de acceso
+Crear un archivo `.env`
 
-Crear un archivo llamado `.env` en la raíz:
-
-```env
-CLAVE_ACCESOS=CLAVE_SEGURA
+``` env
+CLAVE_ACCESOS=TU_CLAVE
 ```
 
-### 7. Colocar el Excel
+Ubicar el Excel en:
 
-El archivo debe estar ubicado en:
-
-```text
+``` text
 datos/Configuración de Equipos Aruba.xlsx
 ```
 
-### 8. Ejecutar
+Ejecutar:
 
-```powershell
+``` powershell
 python main.py
 ```
 
----
+------------------------------------------------------------------------
 
-## Menú principal
+# Filosofía
 
-```text
-1. Mostrar resumen general
-2. Consultar ficha completa de red
-3. Validar inventario
-4. Gestionar switches y accesos
-5. Generar reporte Excel
-6. Salir
-```
+> El Excel continúa siendo la fuente oficial del inventario.
+>
+> SQLite administra la información operativa.
+>
+> NetInventory nunca modifica automáticamente la documentación oficial.
 
----
+------------------------------------------------------------------------
 
-## Flujo recomendado de trabajo
+# Desarrollo futuro
 
-1. Actualizar la información directamente en el Excel.
-2. Guardar el Excel.
-3. Ejecutar NetInventory nuevamente.
-4. Revisar el dashboard.
-5. Ejecutar la validación del inventario.
-6. Corregir los datos pendientes en el Excel.
-7. Importar o actualizar switches desde `PASSSWITCH`.
-8. Generar un nuevo reporte.
+-   Interfaz gráfica.
+-   Reportes PDF.
+-   Mapa de topología.
+-   Google Drive.
+-   Zabbix.
+-   LLDP/CDP.
+-   API REST.
 
----
+------------------------------------------------------------------------
 
-## Fuente oficial de los datos
+# Seguridad
 
-### Inventario y puertos
+No publicar: - `.env` - Base SQLite - Respaldos - Reportes - Excel
+oficial - Credenciales
 
-El archivo Excel es la fuente oficial para:
+------------------------------------------------------------------------
 
-- hojas;
-- bloques;
-- puertos;
-- equipos;
-- bocas patch;
-- VLAN;
-- tipos de conexión.
+# Autor
 
-NetInventory no modifica esta información.
+**Fernando Espinosa**\
+Práctica Profesional --- Departamento TI\
+Colegio Inglés
 
-### Switches
-
-La hoja `PASSSWITCH` es la fuente oficial para:
-
-- IP;
-- descripción;
-- marca;
-- modelo;
-- ubicación;
-- MAC;
-- contraseña.
-
-La base SQLite mantiene:
-
-- copia de consulta;
-- relaciones con bloques;
-- historial;
-- fechas de actualización.
-
----
-
-## Convenciones del Excel
-
-Cada fila debe representar un puerto físico.
-
-Formato recomendado:
-
-```text
-Tipo | Equipo | Boca Patch | Puerto Switch | VLAN
-```
-
-Reglas:
-
-- mantener una fila por puerto;
-- usar números en puerto, boca patch y VLAN;
-- escribir `DISPONIBLE` para puertos libres;
-- escribir `SIN IDENTIFICAR` cuando exista una conexión aún no reconocida;
-- no eliminar filas de puertos libres;
-- evitar celdas combinadas en las filas de datos;
-- mantener encabezados consistentes;
-- no dejar encabezados adicionales dentro de un bloque.
-
----
-
-## Restauración de respaldos
-
-Desde el módulo protegido:
-
-```text
-Gestionar switches y accesos
-→ Restaurar respaldo
-```
-
-Al restaurar:
-
-1. se valida el respaldo;
-2. se crea una copia del estado actual;
-3. se reemplaza la base SQLite;
-4. se solicita reiniciar NetInventory.
-
-La restauración no modifica el archivo Excel.
-
----
-
-## Seguridad y privacidad
-
-No deben compartirse ni subirse públicamente:
-
-- `.env`;
-- base de datos SQLite;
-- respaldos;
-- archivo Excel;
-- reportes;
-- contraseñas;
-- credenciales de red.
-
-El archivo `.gitignore` está configurado para proteger estos elementos.
-
----
-
-## Desarrollo futuro
-
-Las mejoras previstas son:
-
-1. limpieza y estabilización final;
-2. dashboard avanzado en el reporte;
-3. gráficos de ocupación y distribución;
-4. buscador universal;
-5. lectura del Excel sincronizado mediante Google Drive;
-6. integración SNMP de solo lectura;
-7. integración complementaria con Zabbix.
-
----
-
-## Política de modificación
-
-NetInventory está diseñado para:
-
-- consultar el inventario;
-- validar información;
-- generar reportes;
-- administrar relaciones internas;
-- mantener respaldos e historial.
-
-Las correcciones de puertos, VLAN, equipos y patch panel deben realizarse directamente en el Excel oficial.
+**Versión 2.0.0**
