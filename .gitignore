@@ -1,0 +1,91 @@
+# ============================================
+# NETINVENTORY
+# ============================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Variables de entorno
+.env
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# ============================================
+# BASE DE DATOS
+# ============================================
+
+datos/*.db
+datos/*.db-journal
+datos/*.db-shm
+datos/*.db-wal
+
+# ============================================
+# EXCEL DEL COLEGIO
+# ============================================
+
+datos/*.xlsx
+datos/*.xls
+
+# ============================================
+# RESPALDOS
+# ============================================
+
+backups/*
+!backups/.gitkeep
+
+datos/respaldos_descubrimiento/*
+!datos/respaldos_descubrimiento/.gitkeep
+
+# ============================================
+# REPORTES
+# ============================================
+
+reportes/*
+!reportes/.gitkeep
+
+# ============================================
+# LOGS
+# ============================================
+
+logs/*
+!logs/.gitkeep
+
+# ============================================
+# PYINSTALLER
+# ============================================
+
+build/
+dist/
+*.spec
+
+# ============================================
+# CACHE
+# ============================================
+
+.pytest_cache/
+.mypy_cache/
+.cache/
+
+# ============================================
+# JUPYTER
+# ============================================
+
+.ipynb_checkpoints/
