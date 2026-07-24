@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 
@@ -6,16 +7,37 @@ from pathlib import Path
 # ==========================================================
 
 NOMBRE_APLICACION = "NetInventory"
-VERSION_APLICACION = "1.0.0"
+VERSION_APLICACION = "2.0.0"
 ORGANIZACION = "Colegio Inglés"
 AREA_RESPONSABLE = "Departamento TI"
 
 
 # ==========================================================
-# RUTAS PRINCIPALES
+# RUTA BASE DE LA APLICACIÓN
 # ==========================================================
 
-CARPETA_PROYECTO = Path(__file__).resolve().parent
+def obtener_carpeta_proyecto() -> Path:
+    """
+    Obtiene la carpeta principal de NetInventory.
+
+    Durante el desarrollo:
+        utiliza la carpeta donde está config.py.
+
+    En el ejecutable generado con PyInstaller:
+        utiliza la carpeta donde está NetInventory.exe.
+    """
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+
+    return Path(__file__).resolve().parent
+
+
+CARPETA_PROYECTO = obtener_carpeta_proyecto()
+
+
+# ==========================================================
+# RUTAS PRINCIPALES
+# ==========================================================
 
 CARPETA_DATOS = (
     CARPETA_PROYECTO
@@ -32,6 +54,16 @@ CARPETA_RESPALDOS = (
     / "backups"
 )
 
+CARPETA_LOGS = (
+    CARPETA_PROYECTO
+    / "logs"
+)
+
+CARPETA_RESPALDOS_DESCUBRIMIENTO = (
+    CARPETA_DATOS
+    / "respaldos_descubrimiento"
+)
+
 RUTA_EXCEL = (
     CARPETA_DATOS
     / "Configuración de Equipos Aruba.xlsx"
@@ -45,6 +77,11 @@ RUTA_DB = (
 RUTA_ENV = (
     CARPETA_PROYECTO
     / ".env"
+)
+
+RUTA_LOG = (
+    CARPETA_LOGS
+    / "netinventory.log"
 )
 
 
@@ -70,8 +107,16 @@ PREFIJO_IP_SWITCHES = "192.168.5."
 # ==========================================================
 
 ANCHO_CONSOLA = 46
-SEPARADOR_PRINCIPAL = "=" * ANCHO_CONSOLA
-SEPARADOR_SECUNDARIO = "-" * ANCHO_CONSOLA
+
+SEPARADOR_PRINCIPAL = (
+    "="
+    * ANCHO_CONSOLA
+)
+
+SEPARADOR_SECUNDARIO = (
+    "-"
+    * ANCHO_CONSOLA
+)
 
 
 # ==========================================================
